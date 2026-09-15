@@ -278,7 +278,26 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {//FP32 1sign+8expo +23tail
+  unsigned sig=uf&& (1<<31);
+  unsigned exp=uf&& (0b11111111<<23);
+  unsigned fra=uf &&(~(1<<31+0b11111111<<23)); 
+  unsigned signal=(((uf<<1)>>24)^(0b11111111));
+  if(!signal){
+    return uf;
+  }
+  unsigned f_max=((uf<<9)>>31);
+  if(!(signal^(0b11111111))){
+    if(f_max){
+      return (((fra>>1)<<1)+sig+(0b1<<23));
+    }
+    else{
+      return (((fra>>1)<<1)+sig);
+    }
 
+  }
+  else{
+    return (sig+fra+exp+(0b1<<23));
+  }
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
