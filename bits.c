@@ -308,8 +308,43 @@ unsigned floatScale2(unsigned uf) {//FP32 1sign+8expo +23tail
  *   Max ops: 30
  *   Rating: 4
  */
-int floatFloat2Int(unsigned uf) {
-  return 2;
+int floatFloat2Int(unsigned uf) {//向0截断
+  unsigned sig=uf& (0b1<<31);
+  unsigned exp=uf& (255<<23);
+  unsigned fra=uf &(~((0b1<<31)+(255<<23)));
+  unsigned exp_=exp>>23 ;
+  int sign;
+  int bias=((signed int)exp_)-127;
+  unsigned frac_=fra+(1<<23);
+  int bias_=23-bias;
+  if(sig){
+    sign=-1;
+  }
+  else{
+    sign=1;
+  }
+  //判断是否是一个特殊值
+  if((!((exp_)^255))) {
+    return  0x80000000u;
+  }
+  //非规格数
+  if(!(exp_^0)){
+    return 0;
+  }
+  if(bias<0){
+    return 0;
+  }
+  if(bias_&(~(255u))){
+    return 0x80000000u;
+  }
+  if(bias_>>31){
+    return sign*(frac_<<(-bias_)) ;
+  }
+  else{
+    return sign*(frac_>>(bias_));
+  }
+ return -1;
+  
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
