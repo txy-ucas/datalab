@@ -278,9 +278,9 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {//FP32 1sign+8expo +23tail
-  unsigned sig=uf& (0b1<<31);
+  unsigned sig=uf& (1<<31);
   unsigned exp=uf& (255<<23);
-  unsigned fra=uf &(~((0b1<<31)+(255<<23))); 
+  unsigned fra=uf &(~((1<<31)+(255<<23))); 
   unsigned signal=(((uf<<1)>>24)^(255));
   if(!signal){
     return uf;
@@ -290,10 +290,10 @@ unsigned floatScale2(unsigned uf) {//FP32 1sign+8expo +23tail
 
   }
   else{
-    if(!((exp+(0b1<<23))^(255<<23))){
+    if(!((exp+(1<<23))^(255<<23))){
       return (sig+(255<<23));
     }
-    return (sig+fra+exp+(0b1<<23));
+    return (sig+fra+exp+(1<<23));
   }
 }
 /* 
@@ -309,12 +309,12 @@ unsigned floatScale2(unsigned uf) {//FP32 1sign+8expo +23tail
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {//向0截断
-  unsigned sig=uf& (0b1<<31);
+  unsigned sig=uf& (1<<31);
   unsigned exp=uf& (255<<23);
-  unsigned fra=uf &(~((0b1<<31)+(255<<23)));
+  unsigned fra=uf &(~((1<<31)+(255<<23)));
   unsigned exp_=exp>>23 ;
   int sign;
-  int bias=((signed int)exp_)-127;
+  int bias=(exp_)-127;
   unsigned frac_=fra+(1<<23);
   int bias_=23-bias;
   if(sig){
