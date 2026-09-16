@@ -359,6 +359,25 @@ int floatFloat2Int(unsigned uf) {//向0截断
  *   Max ops: 30 
  *   Rating: 4
  */
-unsigned floatPower2(int x) {
-    return 2;
+unsigned floatPower2(int x) {/*sign=0,exp=*/
+  unsigned exp;  
+  int val=x+127;
+  int val_=val+22;
+  unsigned  flag=((!val) | (val>>31)) & (!((val+22)>>31));
+  unsigned value;
+  if((val>>31) & (!(flag))){
+    return 0;
+  }
+  else if(flag){
+    value=1<<val_;
+    return value;
+  }
+  else if(val&(~255)){
+    return 0x7f800000;
+  }
+  else {
+    exp=val<<23;
+    return exp;
+  }
+
 }
